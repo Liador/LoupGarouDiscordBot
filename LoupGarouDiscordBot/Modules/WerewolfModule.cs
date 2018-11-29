@@ -30,19 +30,22 @@ namespace LoupGarouDiscordBot.Modules
         [Command("Reg", RunMode = RunMode.Async)]
         public async Task register()
         {
+            Program.Game.addNewPlayer();
             await Context.Channel.SendMessageAsync("Vous vous êtes bien enregistré");
         }
 
         [Command("New", RunMode = RunMode.Async)]
         public async Task newGame()
         {
+            Program.Game = new WerewolfGame(7);
             await Context.Channel.SendMessageAsync("Une nouvelle partie a été créée. Vous devez vous enregistrer pour y participer. Une fois tous les joueurs enregistrés, lancez la partie avec LGStart");
         }
 
         [Command("Start", RunMode = RunMode.Async)]
         public async Task startGame()
         {
-            await Context.Channel.SendMessageAsync("La partie commence avec X joueurs.");
+            Program.Game.startGame();
+            await Context.Channel.SendMessageAsync("La partie commence avec "+Program.Game.NumberOfPlayers+" joueurs.");
         }
 
         [Command("Stop", RunMode = RunMode.Async)]
