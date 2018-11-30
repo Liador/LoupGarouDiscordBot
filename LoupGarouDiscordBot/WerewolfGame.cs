@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace LoupGarouDiscordBot
@@ -35,6 +36,11 @@ namespace LoupGarouDiscordBot
 
         public void startGame()
         {
+            if (numberOfPlayers<6)
+            {
+                throw new Exception("Pas assez de joueurs, vous n'êtes que " + numberOfPlayers+" joueur"+((numberOfPlayers>1)?"s":"")+" et il faut au minimum être 6.");
+            }
+            shufflePlayers();
             createComp();
             printComp();
         }
@@ -47,13 +53,13 @@ namespace LoupGarouDiscordBot
 
         public void addNewPlayer(string mention, string username)
         { 
-            for (int i = 0; i < players.Count; i++)
+            /***for (int i = 0; i < players.Count; i++)
             {
                 if (players[i].Mention == mention)
                 {
                     throw new Exception("Vous vous êtes déjà enregistré pour cette partie");
                 }
-            }
+            }*/
             NumberOfPlayers++;
             players.Add(new Player(username, mention));
         }
@@ -63,23 +69,41 @@ namespace LoupGarouDiscordBot
             int werewolfWeight = NumberOfPlayers / 6 + 1;
             int numberOfRolesAdded=0;
 
-            players.Add(new Player("nom",Program.Roles[SORCIERE],true, false, false));
+            players[numberOfRolesAdded].Role = Program.Roles[SORCIERE];
             numberOfRolesAdded++;
-            players.Add(new Player("nom", Program.Roles[VOYANTE], true, false, false));
+            players[numberOfRolesAdded].Role = Program.Roles[VOYANTE];
             numberOfRolesAdded++;
-            players.Add(new Player("nom", Program.Roles[CHASSEUR], true, false, false));
+            players[numberOfRolesAdded].Role = Program.Roles[CHASSEUR];
             numberOfRolesAdded++;
 
-            for (int i = werewolfWeight; i > 0; i-- )
+            for (int i = 0; i < werewolfWeight; i++ )
             {
-                players.Add(new Player("nom", Program.Roles[LG], true, false, false));
+                players[numberOfRolesAdded].Role = Program.Roles[LG];
                 numberOfRolesAdded++;
             }
-
+            
             for (int i = NumberOfPlayers- numberOfRolesAdded; i > 0; i--)
             {
-                players.Add(new Player("nom", Program.Roles[SV], true, false, false));
+                players[numberOfRolesAdded].Role = Program.Roles[SV];
                 numberOfRolesAdded++;
+            }
+        }
+
+        private void shufflePlayers()
+        {
+            Player temp = new Player();
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            int n = players.Count;
+            while (n > 1)
+            {
+                byte[] box = new byte[1];
+                do provider.GetBytes(box);
+                while (!(box[0] < n * (Byte.MaxValue / n)));
+                int k = (box[0] % n);
+                n--;
+                temp = players[k];
+                players[k] = players[n];
+                players[n] = temp;
             }
         }
 
@@ -87,7 +111,7 @@ namespace LoupGarouDiscordBot
         {
             for (int i = players.Count-1; i >=0; i--)
             {
-                Console.WriteLine(i+players[i].Role.Name);
+                Console.WriteLine(i + ":" + players[i].Name + "->" + players[i].Role.Name);
             }
         }
     }
