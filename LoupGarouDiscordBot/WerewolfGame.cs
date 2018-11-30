@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace LoupGarouDiscordBot
 {
     class WerewolfGame
     {
+        WerewolfCommunication com;
         const int VOYANTE = 0;
         const int LG = 1;
         const int MAGICIEN = 2;
@@ -14,6 +15,8 @@ namespace LoupGarouDiscordBot
         const int CHASSEUR = 4;
         const int SV = 5;
         const int CUPIDON = 6;
+        int[] firstNightOrder = new int[] { 6 };
+        int[] nightOrder = new int[] { 0, 2, 1, 3 };
         int numberOfPlayers;
         List<Player> players;
 
@@ -25,16 +28,23 @@ namespace LoupGarouDiscordBot
             players = new List<Player>();
         }
 
+        public WerewolfGame(object chanID)
+        {
+            NumberOfPlayers = 0;
+            players = new List<Player>();
+            com = new WerewolfCommunication(chanID);
+        }
+
         public WerewolfGame(int number)
         {
             players = new List<Player>();
             for(int i = 0; i < number; i++)
             {
-                addNewPlayer();
+                addNewPlayer("@you", "youuu");
             }
         }
 
-        public void startGame()
+        public async Task startGame()
         {
             if (numberOfPlayers<6)
             {
@@ -42,13 +52,25 @@ namespace LoupGarouDiscordBot
             }
             shufflePlayers();
             createComp();
+            sendComp();
             printComp();
+            await playFirstNight();
         }
 
-        public void addNewPlayer()
+        private void sendComp()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task playFirstNight()
+        {
+            await com.sendMessage(Texts.VillageFallsAsleep);
+        }
+
+        public void addNewPlayer(Discord.IUser us)
         {
             NumberOfPlayers++;
-            players.Add(new Player());
+            players.Add(new Player(us));
         }
 
         public void addNewPlayer(string mention, string username)

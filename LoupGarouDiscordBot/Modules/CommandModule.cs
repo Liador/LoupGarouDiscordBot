@@ -13,7 +13,7 @@ namespace LoupGarouDiscordBot.Modules
         [Command("help", RunMode = RunMode.Async)]
         public async Task join()
         {
-            await Context.Channel.SendMessageAsync("Helping...\n but try the \"commands\" command ;) ");
+            await Context.Channel.SendMessageAsync("Helping...\n( but try the \"commands\" command )");
         }
 
         [Command("commands", RunMode = RunMode.Async)]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Discord;
 
 namespace LoupGarouDiscordBot
 {
@@ -12,10 +13,21 @@ namespace LoupGarouDiscordBot
         bool alive;
         bool captain;
         bool infected;
+        Discord.IUser user;
 
         public Player()
         {
 
+        }
+
+        public Player(Discord.IUser us)
+        {
+            User = us;
+            Name = User.Username;
+            Mention = User.Mention;
+            alive = true;
+            captain = false;
+            infected = false;
         }
 
         public Player(string n, string m)
@@ -41,6 +53,7 @@ namespace LoupGarouDiscordBot
         public bool Captain { get => captain; set => captain = value; }
         public bool Infected { get => infected; set => infected = value; }
         public string Mention { get => mention; set => mention = value; }
+        public IUser User { get => user; set => user = value; }
         internal Role Role { get => role; set => role = value; }
     }
 }
