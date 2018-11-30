@@ -19,6 +19,7 @@ namespace LoupGarouDiscordBot
         int[] nightOrder = new int[] { 0, 2, 1, 3 };
         int numberOfPlayers;
         List<Player> players;
+        private bool finished = false;
 
         public int NumberOfPlayers { get => numberOfPlayers; set => numberOfPlayers = value; }
 
@@ -52,19 +53,116 @@ namespace LoupGarouDiscordBot
             }
             shufflePlayers();
             createComp();
-            sendComp();
+            await sendComp();
+            shufflePlayers();// to change the order of the players compared to the roles
             printComp();
-            await playFirstNight();
+            await play();
         }
 
-        private void sendComp()
+        private async Task sendComp()
+        {
+            string comp = "";
+            for(int i = 0; i<numberOfPlayers; i++)
+            {
+                comp = comp + players[i].Role.Name + "\n";
+
+            }
+            await com.sendMessage(comp);
+        }
+
+        private async Task play()
+        {
+            await com.sendMessage(Texts.VillageFallsAsleep);
+
+            for (int i = 0; i < firstNightOrder.Length; i++)
+            {
+                findPlayerByRole(firstNightOrder[i]);
+            }
+            playDayFirstTurn();
+            await winConditionsCheck();
+            while(!finished)
+            {
+                for (int i = 0; i < nightOrder.Length; i++)
+                {
+                    findPlayerByRole(firstNightOrder[i]);
+                }
+                playDay();
+                await winConditionsCheck();
+            }
+            //jouer Cupidon
+        }
+
+        private void playDayFirstTurn()
+        {
+            playDay();
+            vote();
+            throw new NotImplementedException();
+        }
+
+        private async Task vote()
+        {
+            string PlayersAvailable = "Votez avec la commande vote + le numéro de la personne que vous désignez\n0 : vote blanc\n";
+            for (int i = 0; i < players.Count; i++)
+            {
+                PlayersAvailable = PlayersAvailable + i + 1 + " : " + players[i].Name + "\n";
+            }
+            await com.sendMessage(PlayersAvailable);
+        }
+
+        private void playDay()
         {
             throw new NotImplementedException();
         }
 
-        private async Task playFirstNight()
+        private async Task winConditionsCheck()
         {
-            await com.sendMessage(Texts.VillageFallsAsleep);
+            int teamLG=0;
+            int teamVillage = 0;
+            int angel = 0;
+            int flutePlayer = 0;
+            for(int i=0; i<players.Count;i++)
+            {
+                if (players[i].Alive)
+                {
+                    if(players[i].Role.Team == "w")
+                    {
+                        teamLG++;
+                    }
+                    else
+                    {
+                        if (players[i].Role.Team == "v")
+                        {
+                            teamVillage++;
+                        }
+                    }
+                }
+            }
+            if(teamLG == 0)
+            {
+                finished = true;
+                await com.sendMessage(Texts.LGWin);
+            }
+            else
+            {
+                if(teamVillage ==0)
+                {
+                    finished = true;
+                    await com.sendMessage(Texts.VillageWin);
+                }
+            }
+        }
+
+        private void findPlayerByRole(int roleID)
+        {
+            int[] playersIndice = new int[numberOfPlayers];
+            int playersFound = 0;
+            for(int i=0; i < players.Count; i++)
+            {
+                if(players[i].Role.Id == roleID)
+                {
+                    playersIndice[playersFound] = i;
+                }
+            }
         }
 
         public void addNewPlayer(Discord.IUser us)

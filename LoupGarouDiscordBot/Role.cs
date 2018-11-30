@@ -10,7 +10,7 @@ namespace LoupGarouDiscordBot
         string name;
         string description;
         string help;
-        string team;
+        string team; //w = werewolf / v = village /
         int weight;
         int numberMax;
         int numberAdded;
