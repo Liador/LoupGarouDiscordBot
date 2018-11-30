@@ -30,8 +30,16 @@ namespace LoupGarouDiscordBot.Modules
         [Command("Reg", RunMode = RunMode.Async)]
         public async Task register()
         {
-            Program.Game.addNewPlayer();
-            await Context.Channel.SendMessageAsync("Vous vous êtes bien enregistré");
+            //Program.Game.addNewPlayer(Context.Message.Author.Mention, Context.Message.Author.Username);
+            try
+            {
+                Program.Game.addNewPlayer(Context.Message.Author.Mention, Context.Message.Author.Username);
+                await Context.Channel.SendMessageAsync("Vous vous êtes bien enregistré");
+            }
+            catch (Exception e)
+            {
+                await Context.Channel.SendMessageAsync(e.Message);
+            }
         }
 
         [Command("New", RunMode = RunMode.Async)]

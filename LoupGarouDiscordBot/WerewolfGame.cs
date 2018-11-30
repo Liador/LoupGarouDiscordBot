@@ -26,8 +26,11 @@ namespace LoupGarouDiscordBot
 
         public WerewolfGame(int number)
         {
-            NumberOfPlayers = number;
             players = new List<Player>();
+            for(int i = 0; i < number; i++)
+            {
+                addNewPlayer();
+            }
         }
 
         public void startGame()
@@ -39,6 +42,20 @@ namespace LoupGarouDiscordBot
         public void addNewPlayer()
         {
             NumberOfPlayers++;
+            players.Add(new Player());
+        }
+
+        public void addNewPlayer(string mention, string username)
+        { 
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (players[i].Mention == mention)
+                {
+                    throw new Exception("Vous vous êtes déjà enregistré pour cette partie");
+                }
+            }
+            NumberOfPlayers++;
+            players.Add(new Player(username, mention));
         }
 
         private void createComp()

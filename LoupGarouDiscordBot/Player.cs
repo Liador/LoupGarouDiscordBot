@@ -7,6 +7,7 @@ namespace LoupGarouDiscordBot
     class Player
     {
         string name;
+        string mention;
         Role role;
         bool alive;
         bool captain;
@@ -15,6 +16,15 @@ namespace LoupGarouDiscordBot
         public Player()
         {
 
+        }
+
+        public Player(string n, string m)
+        {
+            Name = n;
+            Mention = m;
+            alive = true;
+            captain = false;
+            infected = false;
         }
 
         public Player (string n, Role r, bool a, bool c, bool i)
@@ -30,6 +40,7 @@ namespace LoupGarouDiscordBot
         public bool Alive { get => alive; set => alive = value; }
         public bool Captain { get => captain; set => captain = value; }
         public bool Infected { get => infected; set => infected = value; }
+        public string Mention { get => mention; set => mention = value; }
         internal Role Role { get => role; set => role = value; }
     }
 }
